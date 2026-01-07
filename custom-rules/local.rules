@@ -1,0 +1,30 @@
+# 1) Generic SYN scan (EXCLUDES 22 and 23)
+alert tcp any any -> $HOME_NET 1:20,24:79,81:109,111:142,144:3388,3390:65535 (msg:"SCAN: SYN scan detected";flags:S;flow:stateless;sid:4000001; rev:1;)
+# 2) FIN Scan Detection
+alert tcp any any -> $HOME_NET any (msg:"Nmap FIN Scan"; flags:F; flow:stateless;sid:10000302; rev:1;)
+# 3) Xmas Scan Detection
+alert tcp any any -> $HOME_NET any (msg:"Nmap Xmas Scan"; flags:FPU; flow:stateless;sid:10000013; rev:1;)
+# 4) ICMP ping scan
+alert icmp any any -> $HOME_NET any (msg:"SCAN: ICMP echo request";itype:8;sid:4000005; rev:1;)
+# 5) SSH Login Attempt Detected 
+alert tcp any any -> $HOME_NET 22 (msg:"SSH Login Attempt"; flags:S; sid:1000001; rev:1;)
+# 6) SSH Bruteforce Attempt
+alert tcp any any -> $HOME_NET 22 (msg:"SSH Brute Force Attempt"; flow:to_server,established; detection_filter:track by_src, count 5, seconds 60; sid:1000002; rev:1;)
+# 7) Telnet login attempt to  port (ONLY port 23)
+alert tcp any any -> $HOME_NET 23 (msg:"TELNET login attempt"; sid:1000003; rev:1;)
+# 8) FTP login attempt to port (ONLY port 21)
+alert tcp any any -> $HOME_NET 21 (msg:"FTP login attempt"; sid:100005; rev:1;)
+# 9) SQL Injection Attempt 
+alert tcp any any -> $HOME_NET 80 (msg:"SQL Injection Attempt Detected";content:"username=%27+OR+1%3D1";sid:100008902; rev:1;)
+# 10) Directory Traversal Attack  Detection
+alert tcp any any -> $HOME_NET 80 (msg:"Directory Traversal Attempt Detected";content:"../"; http_uri;nocase;sid:10000301; rev:1;)
+# 11) Sensitive File Access Detection
+alert tcp any any -> $HOME_NET 80 (msg:"Sensitive Repository Access - .git Directory";content:"/.git"; http_uri;sid:1000300; rev:1;)
+# 12) SQL Scan Detected
+alert tcp any any -> $HOME_NET 80 (msg:"SQLMap Scan Detected";content:"sqlmap"; http_header; nocase;sid:900500; rev:1;)
+# 13) Command Injection Attempt
+alert tcp any any -> $HOME_NET 80 (msg:"Command Injection Attempt";content:"INJECT_DEMO";sid:1001300; rev:1;)
+# 14) XSS Attempt
+alert tcp any any -> $HOME_NET 80 (msg:"XSS Attempt Detected";content:"xss_comment=%3Cscript%3Ealert%281%29%3C%2Fscript%3E";sid:100008920; rev:2;)
+# 15) Reverse Shell Attempt
+alert tcp any any -> $HOME_NET 80 (msg:"PHP File Upload Detected (possible reverse shell)";content:"filename=\"";content:".php"; distance:0; within:15;s
